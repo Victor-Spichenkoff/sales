@@ -5,6 +5,7 @@
   "scripts": {
     "start": "ts-node src/app.ts",
     "dev": "nodemon --exec ts-node src/app.ts",
+    "build": "npm i",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
