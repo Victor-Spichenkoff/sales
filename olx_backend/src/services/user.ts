@@ -23,7 +23,7 @@ export const findUserById = async (id: string) => {
     const res = await db.user.findUnique({
         where: { id }
     })
-    
+
     return res
 }
 
@@ -43,10 +43,9 @@ export const createUser = async (user: ICreatingUser) => {
         user.passwordHash = bcrypt.hashSync(user.password, salt)
         delete user.password
 
-
         try {
             const res = await db.user.create({
-                data: user as IUser
+                data: user as any
             })
 
             if (!res)

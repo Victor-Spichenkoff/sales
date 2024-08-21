@@ -1,6 +1,7 @@
 import { User } from "@prisma/client";
 
 export type ICreatingUser = {
+    id?: string 
     name: string
     email: string
     state: string
