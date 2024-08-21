@@ -10,7 +10,7 @@ export const findUserByToken = async (token: string) => {
     const { id } = jwt.decode(token) as JWTPayload//erro aqui
 
     const res = await db.user.findUnique({
-        where: { id }
+        where: { id: id }
     })
 
     if (!res)
@@ -21,7 +21,7 @@ export const findUserByToken = async (token: string) => {
 
 export const findUserById = async (id: string) => {
     const res = await db.user.findUnique({
-        where: { id }
+        where: { id: id }
     })
 
     return res

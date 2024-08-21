@@ -25,13 +25,12 @@ export const localStrategy = new LocalStrategy({
     passwordField: "password"
 }, async (email, password, done) => {
     try {
-        const user: User = await findUserByEmailAndPassword(email, password)
+        const user = await findUserByEmailAndPassword(email, password)
         if (user) {
             const token = await createJWTToken(user)
             user.token = token
 
             const response = user
-                user
             // const response: ILocalStrategyResponse = {
             //     auth: {
             //         token
