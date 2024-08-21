@@ -7,8 +7,10 @@ import { ICreatingUser } from "../types/db"
 import { JWTPayload } from "../types/jwt"
 
 export const findUserByToken = async (token: string) => {
+    const { id } = jwt.decode(token) as JWTPayload//erro aqui
+
     const res = await db.user.findUnique({
-        where: { token }
+        where: { id }
     })
 
     if (!res)
@@ -21,7 +23,7 @@ export const findUserById = async (id: string) => {
     const res = await db.user.findUnique({
         where: { id }
     })
-
+    
     return res
 }
 

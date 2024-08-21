@@ -11,6 +11,12 @@ export interface ILocalStrategyResponse {
     }
     user: User
 }
+// export interface ILocalStrategyResponse {
+//     auth?: {
+//         token: string
+//     }
+//     user: User
+// }
 
 
 export const localStrategy = new LocalStrategy({
@@ -53,7 +59,8 @@ export const localStrategy = new LocalStrategy({
 export const localStrategyLogin: RequestHandler = (req, res, next) => {
     const authRequest = passport.authenticate(
         "local",
-        (err: any, StartegyResponse: ILocalStrategyResponse | false) => {
+        // (err: any, StartegyResponse: ILocalStrategyResponse | false) => {
+        (err: any, StartegyResponse: User | false) => {
             if (StartegyResponse) {
                 // req.user = StartegyResponse.user
                 // req.authInfo = StartegyResponse.auth
