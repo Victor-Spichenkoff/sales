@@ -13,9 +13,49 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  id    Int     @id @default(autoincrement())
-  name  String
-  email String  @unique
+  id           String @id @default(uuid())
+  name         String
+  email        String @unique
+  state        String
+  passwordHash String
+  token        String? @unique
+
+  ads Ads[]
+
+  @@map("users")
+}
+
+model State {
+  id   String @id @default(uuid())
+  name String @unique
+
+  @@map("states")
+}
+
+model Category {
+  id   String @id @default(uuid())
+  name String
+  slug String
+
+  @@map("categories")
+}
+
+model Ads {
+  id              String   @id @default(uuid())
+  state           String
+  category        String
+  imagesURl       String
+  createdAt       DateTime @default(now())
+  title           String
+  price           Float
+  priceNegotiable Boolean
+  description     String
+  views           Int
+  status          String
+
+  idUser String
+  user   User   @relation(fields: [idUser], references: [id])
+
+  @@map("ads")
 }
