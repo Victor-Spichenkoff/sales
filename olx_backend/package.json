@@ -21,12 +21,14 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-fileupload": "^1.5.1",
+    "express-validator": "^7.2.0",
     "jimp": "^0.22.12",
     "jsonwebtoken": "^9.0.2",
     "passport": "^0.7.0",
     "passport-http-bearer": "^1.0.1",
     "passport-jwt": "^4.0.1",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
@@ -37,6 +39,7 @@
     "@types/passport-http-bearer": "^1.0.41",
     "@types/passport-jwt": "^4.0.1",
     "@types/passport-local": "^1.0.38",
+    "@types/uuid": "^10.0.0",
     "nodemon": "^3.1.4",
     "prisma": "^5.18.0",
     "ts-node": "^10.9.2",

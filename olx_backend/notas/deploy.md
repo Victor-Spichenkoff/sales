@@ -1,2 +1,3 @@
 # Arrumar:
-- Schema e .env (comentar/descomentar)
+- Schema(comentar/descomentar)
+- Pode dar erro interno se enviar com o provider errado

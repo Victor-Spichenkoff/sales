@@ -1,5 +1,5 @@
 import { ExtractJwt, Strategy as JWTStrategy } from "passport-jwt"
-import { findUserById } from "../services/user"
+import { findUserByIdOrToken } from "../services/user"
 import { RequestHandler } from "express"
 import passport from "passport"
 import { User } from "@prisma/client"
@@ -15,7 +15,7 @@ export const jwtStrategy = new JWTStrategy({
 }, async (payload, done) => {
     const { id } = payload
 
-    const user = await findUserById(id)
+    const user = await findUserByIdOrToken(id)
 
     if (user)
         return done(null, user)

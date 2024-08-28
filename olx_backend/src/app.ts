@@ -16,6 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
 app.use(fileupload())
 app.use(static_(__dirname + "../public"))
+app.use(static_("../public/assets/images"))
 
 
 //login

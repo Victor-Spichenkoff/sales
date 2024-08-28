@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken"
-import { findUserById, findUserByToken } from "../services/user";
+import { findUserByIdOrToken, findUserByToken } from "../services/user";
 import { JWTPayload } from "../types/jwt";
 import { errorMenssage } from "../helpers/errosMenssage";
 
@@ -10,7 +10,7 @@ export const isTokenValid: RequestHandler = async (req, res) => {
     try {
         const payload = jwt.decode(token) as JWTPayload//erro possivel
     
-        const user = await findUserById(payload.id)
+        const user = await findUserByIdOrToken(payload.id)
         
         if(!user || !payload.iat)
             throw errorMenssage("Token inválido" )

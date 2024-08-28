@@ -31,7 +31,7 @@ const estadosBrasil = [
 ];
 
 
-export const create = () => {
+export const createState = () => {
     estadosBrasil.forEach(async (estado) => {
         await db.state.create({ data: { name: estado} })
     })

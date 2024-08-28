@@ -19,14 +19,21 @@ export const findUserByToken = async (token: string) => {
     return res
 }
 
-export const findUserById = async (id: string) => {
+export const findUserByIdOrToken = async (id: string, usingToken?: boolean) => {
+    if(id.length > 80 || usingToken) {
+        const res = await db.user.findUnique({
+            where: { token: id }
+        })
+        
+        return res
+    }
+
     const res = await db.user.findUnique({
         where: { id: id }
     })
-
+    
     return res
 }
-
 
 /**
  * 
@@ -53,8 +60,8 @@ export const createUser = async (user: ICreatingUser) => {
         } catch (e: any) {
             if (e?.code == "P2002")
                 throw "Email já usado"
-            
-            if(String(e).includes("missing"))
+
+            if (String(e).includes("missing"))
                 throw "Dados ausentes!"
 
             throw "Erro interno"
@@ -109,4 +116,8 @@ export const findUserByEmailAndPassword = async (email: string, password: string
 
 
     return user
+}
+
+export const findUserByEmail = async (email: string) => {
+    return await db.user.findUnique({ where: { email } })
 }

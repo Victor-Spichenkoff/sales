@@ -9,15 +9,15 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  // provider = "sqlite"
+  // provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id           String @id @default(uuid())
+  id           String  @id @default(uuid())
   name         String
-  email        String @unique
+  email        String  @unique
   state        String
   passwordHash String
   token        String? @unique
@@ -46,7 +46,7 @@ model Ads {
   id              String   @id @default(uuid())
   state           String
   category        String
-  imagesURl       String
+  image           String
   createdAt       DateTime @default(now())
   title           String
   price           Float

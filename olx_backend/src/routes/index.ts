@@ -5,6 +5,8 @@ import { AddAction, getCategories, getItem, getList, editAction as editAds } fro
 import { localStrategyLogin } from '../lib/passport-local'
 import { jwtStrategyMiddleware } from '../lib/passport-jwt'
 import { getAllUsers } from '../controllers/bugFix.controller'
+import { signupValidator } from '../validators/auth.validator'
+import { userEditValidator } from '../validators/user.validator'
 
 
 const router = Router()
@@ -30,11 +32,12 @@ router.post('/isTokenValid', isTokenValid)
 router.post("/user/signin", localStrategyLogin)
 
 
-router.post("/user/signup", signUp)
+router.post("/user/signup", signupValidator, signUp)
 
 router.route("/user/me")
+    .all(jwtStrategyMiddleware)
     .get(info)
-    .put(editUser)
+    .put(userEditValidator, editUser)
 
 
 
@@ -43,10 +46,10 @@ router.route("/user/me")
 //--------------------------------------------
 router.get('/category', getCategories)
 
-router.get('/ad/add', AddAction)
+router.post('/ad/add', jwtStrategyMiddleware, AddAction)
 router.get('/ad/list', getList)
 router.get('/ad/item', getItem)
-router.post('/ad/:id', editAds)
+router.post('/ad/:id', jwtStrategyMiddleware, editAds)
 
 
 
