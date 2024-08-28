@@ -61,7 +61,9 @@ export const AddAction: RequestHandler = async (req: any, res) => {
 
 
 export const getList: RequestHandler = async (req, res) => {
+    const ads = await db.ads.findMany()
 
+    res.send(ads)
 }
 
 
