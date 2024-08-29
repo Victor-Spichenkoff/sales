@@ -53,7 +53,7 @@ model Ads {
   priceNegotiable Boolean
   description     String
   views           Int
-  status          String
+  status          Boolean
 
   idUser String
   user   User   @relation(fields: [idUser], references: [id])

@@ -81,7 +81,7 @@ export const createJWTToken = async (user: IUser) => {
     }
 
     const token = jwt.sign(payload, String(process.env.JWT_KEY), {
-        expiresIn: "3h"
+        expiresIn:  process.env.NODE_ENV == "dev" ? "1y" : "3h"
     })
 
     const res = await db.user.update({
