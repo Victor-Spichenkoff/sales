@@ -3,7 +3,7 @@ import { db } from "../lib/db"
 import jimp from "jimp"
 import { findUserByIdOrToken } from "../services/user"
 import { errorMenssage } from "../helpers/errosMenssage"
-import { addImage } from "../helpers/addImage"
+import { addImage, addImageAndDeleteOld } from "../helpers/addImage"
 import path from "path"
 import { ISort } from "../types/responses"
 import { IFiltersAds } from "../types/ads"
@@ -40,7 +40,7 @@ export const AddAction: RequestHandler = async (req: any, res) => {
 
     const user = await findUserByIdOrToken(data.token, true)
     const category = await getCategoryBySlug(data.category)
-    
+
     // await db.category.findFirst({ where: { slug: data.category } })
 
     if (!category)
@@ -53,7 +53,6 @@ export const AddAction: RequestHandler = async (req: any, res) => {
     data.views = 0
     data.priceNegotiable = data.priceNegotiable == "true" || data.priceNegotiable === true
 
-    console.log(req.files.image.data)
     if (req.files && req.files.image) {//receber só uma
         const url = await addImage(req.files.image.data)
         data.image = url
@@ -87,15 +86,14 @@ export const getList: RequestHandler = async (req, res) => {
     if (stateFromDb)
         filters.state = String(state).toUpperCase()
 
-    try 
-    {
+    try {
         let ads = await getAdsByFilter(page, limit, sort, filters)
 
         ads = ads.map((ad) => {
             ad.image = path.resolve(__dirname, `../../public/assets/userImages/${ad.image}`)
             return ad
         })
-    
+
         const totalOfItem = await getTotalSizeOfads(filters)
 
         res.send({
@@ -103,61 +101,70 @@ export const getList: RequestHandler = async (req, res) => {
             total: totalOfItem
         })
 
-    } catch
-    {
+    } catch {
         res.status(400).send(errorMenssage("Erro na consulta"))
     }
 
 }
 
 
-export const editAction: RequestHandler = async (req, res) => {
+export const editAction: RequestHandler = async (req: any, res) => {
     const { id } = req.params
     let { title, status, price, priceNegotiable, description, category, image, token } = req.body
 
 
     const ad = await getAdById(String(id))
-    if(!id || !ad)
+    if (!id || !ad)
         return res.status(400).send(errorMenssage("Produto não encontrado"))
 
 
     const user = await findUserByIdOrToken(token, true)
 
-    if(user?.id != ad.idUser)
+    if (user?.id != ad.idUser)
         return res.status(403).send(errorMenssage("Não é seu anúncio"))
 
 
-    let updates:any = {}
+    let updates: any = {}
 
-    if(title)
+    if (title)
         updates.title = title
-    if(description)
+    if (description)
         updates.description = description
-    if(status)
+    if (status)
         updates.status = status
-    if(price) {
-        if(price < 0)
+    if (price) {
+        if (price < 0)
             price = 0
         updates.price = Number(price.replace(".", "").replace(",", ".").replace("R$", "").replace("R$ ", ""))
     }
-    if(priceNegotiable)
+    if (priceNegotiable)
         updates.priceNegotiable = Boolean(priceNegotiable)
 
-    if(category) {
+    if (category) {
         const categoryFromDb = await getCategoryBySlug(category)
-        if(!categoryFromDb)
+        if (!categoryFromDb)
             return res.status(400).send(errorMenssage("Categoria inexistente"))
         updates.category = category
     }
 
+
+    if (req.files && req.files.image) {//receber só uma
+        const url = await addImageAndDeleteOld(
+            req.files.image.data,
+            ad.image
+        )
+        updates.image = url
+    }
+
+
     try {
         await db.ads.update({
             where: { id },
-            data: { ...updates }
+            data: { ...updates, }
         })
 
         res.sendStatus(204)
-    }catch {
+    } catch {
         res.status(400).send(errorMenssage("Não foi possível salvar"))
     }
 
@@ -166,24 +173,24 @@ export const editAction: RequestHandler = async (req, res) => {
 
 export const getItem: RequestHandler = async (req, res) => {
     //other == relacionados também/ o mesmo autor
-    const { id, other=false } = req.query
+    const { id, other = false } = req.query
 
-    if(!id) 
+    if (!id)
         return res.status(400).send(errorMenssage("Anúncio sem ID"))
 
     const ad = await getAddByIdAndIncreaseViews(String(id))
-    
-    if(!ad)
+
+    if (!ad)
         return res.status(400).send(errorMenssage("Produto inexistente"))
 
     ad.image = ad.image = path.resolve(__dirname, `../../public/assets/userImages/${ad.image}`)
 
     const category = await getCategoryBySlug(ad.category, true)
 
-    
+
     //adicionar o other
     let others: any = []
-    if(other) {
+    if (other) {
         const othersData = await db.ads.findMany({
             where: {
                 idUser: ad.idUser
@@ -191,21 +198,21 @@ export const getItem: RequestHandler = async (req, res) => {
         })
 
         othersData.forEach(other => {
-            if(other.id != ad.id) {
+            if (other.id != ad.id) {
                 others.push({
                     id: other.id,
                     title: other.title,
                     price: other.price,
-                    priceNegotiable : other.priceNegotiable,
+                    priceNegotiable: other.priceNegotiable,
                     image: path.resolve(__dirname, `../../public/assets/userImages/${other.image}`)
                 })
             }
 
         })
     }
-        
 
-    let finalAd:any = ad
+
+    let finalAd: any = ad
     finalAd.category = category
     finalAd.state = ad.user.state
     finalAd.others = others
