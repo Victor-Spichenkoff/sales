@@ -31,8 +31,8 @@ export const Header = ({ title }: IHeader) => {
           {/* Não logado */}
           {!userInfo.token && (
             <>
-              <NavigationItem href="signin" label="Entrar" />
-              <NavigationItem href="signup" label="Cadastrar" />
+              <NavigationItem href="auth/signin" label="Entrar" />
+              <NavigationItem href="auth/signup" label="Cadastrar" />
               <NavigationItem href="signup" label="Anuncie aqui" isButton />
             </>
           )}
